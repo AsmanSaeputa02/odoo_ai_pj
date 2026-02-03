@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <record id="view_ocr_history_tree" model="ir.ui.view">
+        <field name="name">ocr.history.tree</field>
+        <field name="model">ocr.history</field>
+        <field name="arch" type="xml">
+            <tree string="ประวัติการสแกน">
+                <field name="scan_date"/>
+                <field name="filename"/>
+                <field name="user_id" widget="many2one_avatar_user"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'processed'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_ocr_history_form" model="ir.ui.view">
+        <field name="name">ocr.history.form</field>
+        <field name="model">ocr.history</field>
+        <field name="arch" type="xml">
+            <form string="สแกนเอกสาร">
+                <header>
+                    <button name="action_scan_image" string="เริ่มสแกนด้วย AI" 
+                            type="object" class="oe_highlight" 
+                            invisible="state != 'draft'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="filename" placeholder="ชื่อไฟล์เอกสาร"/></h1>
+                    </div>
+                    <group>
+                        <group string="ข้อมูลภาพถ่าย">
+                            <field name="image_scanned" widget="image" class="oe_avatar" options="{'size': [200, 200]}"/>
+                        </group>
+                        <group string="ข้อมูลระบบ">
+                            <field name="scan_date"/>
+                            <field name="user_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="ผลลัพธ์จาก AI" name="ai_result">
+                            <field name="raw_text" placeholder="รอผลการประมวลผลจาก AI..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ocr_history" model="ir.actions.act_window">
+        <field name="name">AI OCR Scanner</field>
+        <field name="res_model">ocr.history</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_ocr_root" name="AI Scanner" sequence="10"/>
+    <menuitem id="menu_ocr_history" name="History" 
+              parent="menu_ocr_root" action="action_ocr_history"/>
+</odoo>
