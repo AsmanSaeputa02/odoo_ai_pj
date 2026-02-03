@@ -13,10 +13,15 @@ class OCRHistory(models.Model):
 
     # สถานะของการประมวลผล
     state = fields.Selection([
-        ('draft' , 'รอดำเนินการ')
-        ('processed', 'ประมวลผลสำเร็จ')
-        ('error', 'เกิดข้อผิดพลาด')
+        ('draft' , 'รอดำเนินการ'),
+        ('processed', 'ประมวลผลสำเร็จ'),
+        ('error', 'เกิดข้อผิดพลาด'),
     ], string='สถานะ', default='draft')
+
+    def action_scan_image(self):
+        # ใส่โค้ดหลอกๆ ไว้ก่อนเพื่อให้ระบบผ่าน Error นี้ไปได้
+        self.write({'state': 'processed'})
+        return True
 
     # ใครเป็นคนทำ? (ความสัมพันธ์แบบ Many2one ไปยังตารางผู้ใช้งาน)
     user_id = fields.Many2one('res.users',string='ผู้ใช้งาน',default=lambda self:self.env.user)

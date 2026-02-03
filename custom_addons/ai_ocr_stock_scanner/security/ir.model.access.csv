@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ocr_history_admin,access.ocr.history.admin,model_ocr_history,base.group_system,1,1,1,1
