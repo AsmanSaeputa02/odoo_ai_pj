@@ -1,0 +1,41 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "🐍 Python: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "🔍 Debug OCR Pattern",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/custom_addons/ai_ocr_stock_scanner/functions/ocr_pattern.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/custom_addons/ai_ocr_stock_scanner",
+            "justMyCode": false,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/custom_addons/ai_ocr_stock_scanner"
+            }
+        },
+        {
+            "name": "� Docker: Attach to Odoo",
+            "type": "debugpy",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 5678
+            },
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}/custom_addons",
+                    "remoteRoot": "/mnt/extra-addons"
+                }
+            ],
+            "justMyCode": false
+        }
+    ]
+}

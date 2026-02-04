@@ -5,6 +5,7 @@ services:
       - db
     ports:
       - "8069:8069"
+      - "5678:5678"  # Port สำหรับ debugpy (ถ้าต้องการใช้ในอนาคต)
     volumes:
       - odoo-web-data:/var/lib/odoo
       - ./custom_addons:/mnt/extra-addons
@@ -12,6 +13,7 @@ services:
       - HOST=db
       - USER=odoo
       - PASSWORD=odoo
+    shm_size: '2gb'  # เพิ่ม shared memory สำหรับ PaddlePaddle
   db:
     image: postgres:15
     environment:

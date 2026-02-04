@@ -24,6 +24,9 @@
                             type="object" class="oe_highlight" 
                             invisible="state != 'draft'"/>
                     <field name="state" widget="statusbar"/>
+                    <button name="action_create_partner" string="สร้างรายชื่อคู่ค้า" 
+                            type="object" class="btn-secondary" 
+                            invisible="not identified_number or state != 'processed'"/>
                 </header>
                 <sheet>
                     <div class="oe_title">
@@ -36,6 +39,15 @@
                         <group string="ข้อมูลระบบ">
                             <field name="scan_date"/>
                             <field name="user_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="ผลการประมวลผล OCR">
+                        <group>
+                            <field name="identified_number" string="เลขบัตรประชาชน"/>
+                            <field name="identified_date" string="วันที่"/>
+                        </group>
+                        <group>
+                            <field name="identified_amount" string="จำนวนเงิน"/>
                         </group>
                     </group>
                     <notebook>
