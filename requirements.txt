@@ -3,5 +3,10 @@ numpy>=1.21.0,<2.0.0
 opencv-python-headless>=4.6.0
 pillow>=9.0.0
 
-# EasyOCR สำหรับ OCR ภาษาไทย และภาษาอื่นๆ
+# ติดตั้ง PyTorch CPU-only ก่อน (สำคัญมาก!)
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.1.0+cpu
+torchvision==0.16.0+cpu
+
+# EasyOCR (จะใช้ PyTorch ที่ติดตั้งไปแล้ว)
 easyocr>=1.7.0
