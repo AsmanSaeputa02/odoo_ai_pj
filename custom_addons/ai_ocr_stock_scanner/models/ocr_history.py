@@ -17,9 +17,9 @@ from ..functions import ocr_pattern
 logger = logging.getLogger(__name__)
 
 try:
-    from paddleocr import PaddleOCR
+    import easyocr
 except ImportError:
-    PaddleOCR = None
+    easyocr = None
 
 
 
@@ -49,29 +49,15 @@ class OCRHistory(models.Model):
 
         if not self.image_scanned:
             raise ValidationError("กรุณาอัปโหลดรูปภาพก่อน")
-        if not PaddleOCR:
-            raise ValidationError("ไม่พบ PaddleOCR. กรุณาติดตั้ง PaddleOCR ด้วย")
+        if not easyocr:
+            raise ValidationError("ไม่พบ EasyOCR. กรุณาติดตั้ง EasyOCR ด้วย")
 
         try:
-            # ===== สำคัญมาก! ต้องตั้งค่าก่อนทำอะไร =====
+            # สร้าง EasyOCR Reader สำหรับภาษาไทยและอังกฤษ
+            # gpu=False เพื่อใช้ CPU (เหมาะสำหรับ Docker)
+            reader = easyocr.Reader(['th', 'en'], gpu=False)
             
-            # ปิด PIR API ที่ทำให้เกิด error (ต้องทำก่อน import paddle!)
-            os.environ['FLAGS_enable_pir_api'] = '0'
-            os.environ['FLAGS_pir_apply_shape_optimization_pass'] = '0'
-            
-            # ปิด OneDNN/MKLDNN
-            os.environ['FLAGS_use_mkldnn'] = '0'
-            
-            # บังคับใช้ CPU
-            os.environ['CUDA_VISIBLE_DEVICES'] = ''
-            
-            # ตั้งค่าเพิ่มเติมสำหรับ Paddle เวอร์ชันใหม่
-            os.environ['FLAGS_fraction_of_gpu_memory_to_use'] = '0'
-            
-            # สร้าง OCR instance
-            ocr = PaddleOCR(lang='th')
-            
-            # แปลงรูปภาพ
+            # แปลงรูปภาพจาก base64
             img_data = base64.b64decode(self.image_scanned)
             nparr = np.frombuffer(img_data, np.uint8)
             img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
@@ -80,14 +66,17 @@ class OCRHistory(models.Model):
                 raise ValidationError("ไม่สามารถอ่านรูปภาพได้")
             
             # เรียกใช้ OCR
-            result = ocr.ocr(img)
+            # result จะเป็น list ของ [bbox, text, confidence]
+            result = reader.readtext(img)
 
-            # ประมวลผลข้อความ
+            # ประมวลผลข้อความจาก EasyOCR
+            # EasyOCR result format: [[bbox, text, confidence], ...]
             full_text = ""
-            if result and result[0]:
-                for line in result[0]:
-                    if len(line) >= 2:
-                        full_text += line[1][0] + "\n"
+            if result:
+                for detection in result:
+                    if len(detection) >= 2:
+                        text = detection[1]  # text อยู่ที่ index 1
+                        full_text += text + "\n"
             
             if not full_text.strip():
                 self.write({'raw_text': 'ไม่พบข้อความ', 'state': 'error'})

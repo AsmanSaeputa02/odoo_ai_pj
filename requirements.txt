@@ -1,0 +1,7 @@
+# Core dependencies
+numpy>=1.21.0,<2.0.0
+opencv-python-headless>=4.6.0
+pillow>=9.0.0
+
+# EasyOCR สำหรับ OCR ภาษาไทย และภาษาอื่นๆ
+easyocr>=1.7.0
